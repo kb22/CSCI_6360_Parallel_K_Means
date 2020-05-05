@@ -18,5 +18,5 @@ mv /tmp/tmp.$SLURM_JOB_ID /tmp/hosts.$SLURM_JOB_ID
 module load gcc/7.4.0/1
 module load spectrum-mpi
 module load cuda
-mpirun -hostfile /tmp/hosts.$SLURM_JOB_ID -np $SLURM_NPROCS /gpfs/u/home/PCP9/PCP9nthd/barn/project_mpi_cuda/k_all_exe 
+mpirun -hostfile /tmp/hosts.$SLURM_JOB_ID -np $SLURM_NPROCS k_all_exe 
 rm /tmp/hosts.$SLURM_JOB_ID

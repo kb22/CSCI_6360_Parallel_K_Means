@@ -109,7 +109,7 @@ void assign_thru_gpu(double* num, double* centroids_c, int* idx, int each_chunk)
 	for(int i=index; i<each_chunk; i+=stride){
 		
 		int x=index+offset*stride;
-		int i, j, k ; 
+		int j, k ; 
 
 		for (k=0;k<K;k++){
 
@@ -169,22 +169,22 @@ extern "C" void cuda_init(int each_chunk, int myrank, int numranks){
 extern "C" void k_means_kernel_launch(double* num, double* centroids_c, int* idx, int each_chunk, int n_blocks, int no_of_threads){
 	
 	int cudaDeviceCount;
-	cudaError_t cE1,cE2, cE3;
+	cudaError_t cE2, cE3;
 
 	findclosestcentroids<<< n_blocks, no_of_threads>>>(num, centroids_c, idx, each_chunk);
 		
-	cE1=cudaGetDeviceCount( &cudaDeviceCount);
+	cudaGetDeviceCount( &cudaDeviceCount);
 	cE2=cudaDeviceSynchronize();
 	//printf("The two errors are %d %d \n",cE1,cE2);
-	//const char* x_err=cudaGetErrorString (cE2);
-	//printf("%s \n",x_err); 
+	const char* x_err=cudaGetErrorString (cE2);
+	printf("%s \n",x_err); 
 
 	computeCentroids<<<1, 32>>>(num, &idx[0], centroids_c,each_chunk);
 
 	cE3=cudaDeviceSynchronize();
 	//printf("The error is %d\n",cE3);
-	//x_err=cudaGetErrorString (cE3);
-	//printf("%s \n",x_err); 
+	x_err=cudaGetErrorString (cE3);
+	printf("%s \n",x_err); 
 
 }
 
