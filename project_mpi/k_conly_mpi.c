@@ -118,7 +118,7 @@ int main(int argc, char *argv[]){
    unsigned long long finish = 0;
 
 	int myrank, numranks, result;
-	int i,each_chunk,j,k;
+	int i,each_chunk,j,k,each_chunk_pos;
     double starttime, endtime;
    
     MPI_Init(&argc, &argv);
@@ -132,6 +132,7 @@ int main(int argc, char *argv[]){
     //Determination of each chunk of the file each process is going to read
 
     each_chunk=X/numranks;
+    each_chunk_pos=each_chunk;
 	if(myrank==numranks-1)
 		each_chunk=each_chunk+X%numranks;
 	//printf("Each chunk %d \n", each_chunk);
@@ -146,7 +147,7 @@ int main(int argc, char *argv[]){
 	result=MPI_File_open(MPI_COMM_WORLD, "input.bin", MPI_MODE_RDONLY, MPI_INFO_NULL, &fh);
 		if(result != MPI_SUCCESS) {printf("Error in opening the file\n"); exit(-1);}
 
-	result=MPI_File_read_at(fh, myrank*each_chunk*Y*sizeof(double), num, each_chunk*Y, MPI_DOUBLE, &status);
+	result=MPI_File_read_at(fh, myrank*each_chunk_pos*Y*sizeof(double), num, each_chunk*Y, MPI_DOUBLE, &status);
 		if(result != MPI_SUCCESS) {printf("Error in reading the file\n"); exit(-1);}
 	
 		/*
@@ -245,7 +246,7 @@ int main(int argc, char *argv[]){
    	result=MPI_File_open(MPI_COMM_WORLD, "output.bin",  MPI_MODE_CREATE|MPI_MODE_RDWR, MPI_INFO_NULL, &fh);
 		if(result != MPI_SUCCESS) {printf("Error in opening the file\n"); exit(-1);}
 
-	result=MPI_File_write_at(fh, myrank*each_chunk*Y*sizeof(double), num, each_chunk*Y, MPI_DOUBLE, &status);
+	result=MPI_File_write_at(fh, myrank*each_chunk_pos*Y*sizeof(double), num, each_chunk*Y, MPI_DOUBLE, &status);
 		if(result != MPI_SUCCESS) {printf("Error in writing the file\n"); exit(-1);}
 
 
